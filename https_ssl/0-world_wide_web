@@ -1,0 +1,30 @@
+s script displays information about DNS subdomains
+
+domain="$1"
+sub="$2"
+
+# Function to query a subdomain
+print_subdomain_info() {
+    local d="$1"
+    local sd="$2"
+    # Ignore SC2086 as required
+    record=$(dig "${sd}.${d}" | awk '/ANSWER SECTION/{getline; print $4" "$5}')
+
+    record_type=$(echo "$record" | awk '{print $1}')
+    destination=$(echo "$record" | awk '{print $2}')
+
+    echo "The subdomain ${sd} is a ${record_type} record and points to ${destination}"
+}
+
+# If only domain is provided → print all required subdomains
+if [ -n "$domain" ] && [ -z "$sub" ]; then
+    for sd in www lb-01 web-01 web-02
+    do
+        print_subdomain_info "$domain" "$sd"
+    done
+
+# If both domain and subdomain provided → print specific one
+elif [ -n "$domain" ] && [ -n "$sub" ]; then
+    print_subdomain_info "$domain" "$sub"
+fi
+
