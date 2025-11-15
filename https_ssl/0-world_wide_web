@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
-
-s script displays information about DNS subdomains
+#script displays information about DNS subdomains
 
 domain="$1"
 sub="$2"
